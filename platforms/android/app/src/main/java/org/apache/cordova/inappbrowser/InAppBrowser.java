@@ -597,6 +597,10 @@ public class InAppBrowser extends CordovaPlugin {
         }
     }
 
+    private void reLoadWebView() {
+        this.inAppWebView.reload();
+    }
+
     /**
      * Navigate to the new page
      *
@@ -887,6 +891,32 @@ public class InAppBrowser extends CordovaPlugin {
                     }
                 });
 
+                // Refresh button
+                ImageButton refresh = new ImageButton(cordova.getActivity());
+                RelativeLayout.LayoutParams refreshLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+                refreshLayoutParams.addRule(RelativeLayout.RIGHT_OF, 3);
+                refresh.setLayoutParams(refreshLayoutParams);
+                refresh.setContentDescription("Refresh Button");
+                refresh.setId(Integer.valueOf(7));
+                int freResId = activityRes.getIdentifier("refresh", "drawable", cordova.getActivity().getPackageName());
+                Drawable freIcon = activityRes.getDrawable(freResId);
+                if (navigationButtonColor != "") refresh.setColorFilter(android.graphics.Color.parseColor(navigationButtonColor));
+                if (Build.VERSION.SDK_INT >= 16)
+                    refresh.setBackground(null);
+                else
+                    refresh.setBackgroundDrawable(null);
+                refresh.setImageDrawable(freIcon);
+                refresh.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                refresh.setPadding(0, this.dpToPixels(10), 0, this.dpToPixels(10));
+                if (Build.VERSION.SDK_INT >= 16)
+                    refresh.getAdjustViewBounds();
+
+                refresh.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        reLoadWebView();
+                    }
+                });
+
                 // Edit Text Box
                 edittext = new EditText(cordova.getActivity());
                 RelativeLayout.LayoutParams textLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -1052,6 +1082,7 @@ public class InAppBrowser extends CordovaPlugin {
                 // Add the back and forward buttons to our action button container layout
                 actionButtonContainer.addView(back);
                 actionButtonContainer.addView(forward);
+                actionButtonContainer.addView(refresh);
 
                 // Add the views to our toolbar if they haven't been disabled
                 if (!hideNavigationButtons) toolbar.addView(actionButtonContainer);
